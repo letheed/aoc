@@ -1,0 +1,96 @@
+name: aoc
+version: 0.1.0
+synopsis: Advent of code
+author: Letheed <letheed@outlook.com>
+github: letheed/aoc
+copyright: 2016 Letheed
+license: BSD3
+
+ghc-options:
+  - -Wall -Wcompat
+  - -fwarn-tabs
+  - -Wincomplete-uni-patterns
+  - -Wincomplete-record-updates
+  - -Wredundant-constraints
+  # - -fno-warn-type-defaults
+  - -fno-warn-name-shadowing
+  - -foptimal-applicative-do
+
+dependencies:
+  - base >= 4.7 && < 5
+  - batteries >= 0.1
+  - containers >= 0.5
+
+library:
+  source-dirs:
+    - src
+  exposed-modules:
+    - Puzzles
+  dependencies:
+    - aeson >= 1.3
+    - array >= 0.5
+    - bytestring >= 0.10
+    - cryptonite >= 0.25
+    - deepseq >= 1.4
+    - hashable >= 1.2
+    - parsec >= 3.1
+    - process >= 1.6
+    - scientific >= 0.3
+    - text >= 1.2
+    - unordered-containers >= 0.2
+    - vector >= 0.12
+
+executable:
+  main: Main.hs
+  source-dirs: src/app
+  ghc-options: -threaded
+  dependencies:
+    - aoc
+
+default-extensions:
+  - EmptyCase
+  - FlexibleContexts
+  - FlexibleInstances
+  - InstanceSigs
+  - MultiParamTypeClasses
+  - LambdaCase
+  - MultiWayIf
+  - NamedFieldPuns
+  - DuplicateRecordFields
+  - RecordWildCards
+  - TupleSections
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveLift
+  - DeriveTraversable
+  - DerivingStrategies
+  - GeneralizedNewtypeDeriving
+  - StandaloneDeriving
+  - BangPatterns
+  - KindSignatures
+  - TypeOperators
+  - OverloadedStrings
+  - ScopedTypeVariables
+  - TypeApplications
+  - PartialTypeSignatures
+  - ConstraintKinds
+  - RankNTypes
+  - ApplicativeDo
+  - DefaultSignatures
+  - PatternSynonyms
+  - ExistentialQuantification
+  - FunctionalDependencies
+  - GADTs
+  - DataKinds
+  - TypeFamilies
+  # - TypeFamilyDependencies
+  - NegativeLiterals
+  - MagicHash
+  - ViewPatterns
+  - BinaryLiterals
+  - NumDecimals
+  - MonadComprehensions
+  - ParallelListComp
+  - OverloadedLabels
+  - PackageImports
