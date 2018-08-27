@@ -1,7 +1,7 @@
 module Common
-    ( Day(..)
-    , Year(..)
-    , Date(..)
+    ( Day (..)
+    , Year (..)
+    , Date (..)
     ) where
 
 import Data.Array
@@ -13,12 +13,11 @@ import qualified Data.Text as Text
 
 
 type Answer = Text
-
-
 data Answers
     = None
     | One Answer
     | Two (Answer, Answer)
+type Solver = Text -> IO ()
 
 
 data Day

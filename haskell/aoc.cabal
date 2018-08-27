@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ab601eb81109aff93524dcde6e50a9c70c996773f7623dfbe7a27e31aa0a2793
+-- hash: dcfe4bb6227a85abb0a6659bfb3c7326feeea9dae62ff339e0f955134c71ca07
 
 name:           aoc
 version:        0.1.0
@@ -26,6 +26,7 @@ library
   other-modules:
       Common
       Computation
+      Error
       LibIO
       LibPuzzle
       Y2015
@@ -70,6 +71,7 @@ library
     , process >=1.6
     , scientific >=0.3
     , text >=1.2
+    , text-show >=3.7
     , unordered-containers >=0.2
     , vector >=0.12
   default-language: Haskell2010

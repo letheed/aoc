@@ -37,6 +37,7 @@ library:
     - process >= 1.6
     - scientific >= 0.3
     - text >= 1.2
+    - text-show >= 3.7
     - unordered-containers >= 0.2
     - vector >= 0.12
 
