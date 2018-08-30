@@ -3,7 +3,6 @@
 #![feature(in_band_lifetimes)]
 #![feature(nll)]
 #![feature(stmt_expr_attributes)]
-#![feature(tool_attributes)]
 #![feature(tool_lints)]
 #![feature(try_from)]
 #![warn(rust_2018_idioms, rust_2018_compatibility)]

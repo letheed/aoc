@@ -1,7 +1,6 @@
 #![feature(drain_filter)]
 #![feature(in_band_lifetimes)]
 #![feature(stmt_expr_attributes)]
-#![feature(tool_attributes)]
 #![warn(rust_2018_idioms, rust_2018_compatibility)]
 #![cfg_attr(feature = "cargo-clippy", deny(clippy_correctness))]
 #![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
