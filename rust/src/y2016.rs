@@ -14,7 +14,7 @@ const PUZZLES_ARRAY: [Option<Puzzle>; 25] = [
     Some(d07::PUZZLE),
     Some(d08::PUZZLE),
     Some(d09::PUZZLE),
-    None, // Some(d10::PUZZLE),
+    Some(d10::PUZZLE),
     None, // Some(d11::PUZZLE),
     None, // Some(d12::PUZZLE),
     None, // Some(d13::PUZZLE),
@@ -41,7 +41,7 @@ mod d06;
 mod d07;
 mod d08;
 mod d09;
-// mod d10;
+mod d10;
 // mod d11;
 // mod d12;
 // mod d13;
