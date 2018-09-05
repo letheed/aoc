@@ -6,7 +6,7 @@ use fnv::{FnvBuildHasher as BuildHasher, FnvHashMap as HashMap};
 const DATE: Date = Date::new(Day::D07, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let mut circuit = Circuit::with_capacity(512);
     for line in input.lines() {
@@ -33,7 +33,7 @@ enum Gate<'a> {
 }
 
 #[rustfmt::skip]
-#[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
+#[allow(clippy::cyclomatic_complexity)]
 fn parse_gate(s: &str) -> Result<(&str, Gate<'_>)> {
     macro_rules! gate { ($name:ident, $($args:tt)*) => {
             named!($name(Str<'_>) -> Gate<'_>, sep!(space0, do_parse!( $($args)* )))
@@ -102,7 +102,7 @@ impl Circuit<'a> {
         self.gates.insert(wire, gate)
     }
 
-    #[cfg_attr(feature = "cargo-clippy", allow(shadow_unrelated))]
+    #[allow(clippy::shadow_unrelated)]
     fn resolve(&mut self, wire: &'a str) -> Result<u16> {
         macro_rules! unary_gate {
             ($stack:ident, $wire:ident, $in_:ident) => {

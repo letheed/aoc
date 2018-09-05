@@ -4,7 +4,7 @@ use fnv::FnvHashMap as HashMap;
 const DATE: Date = Date::new(Day::D06, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let first_line = input.lines().next().ok_or_fail("input is empty")?;
     let mut count_maps = vec![HashMap::default(); first_line.chars().count()];

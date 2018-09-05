@@ -8,7 +8,7 @@ use crate::{parse::*, Date, Day, Puzzle, Result};
 const DATE: Date = Date::new(Day::D23, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let program = parse_program(&input)?;
     let mut machine = Machine::default();
@@ -52,7 +52,7 @@ struct Machine {
 }
 
 impl Machine {
-    #[cfg_attr(feature = "cargo-clippy", allow(ptr_arg))]
+    #[allow(clippy::ptr_arg)]
     fn run(&mut self, program: &Program) {
         self.ptr = 0;
         while let Some(&instruction) = program.get(self.ptr) {
@@ -95,7 +95,7 @@ impl Machine {
         }
     }
 
-    #[cfg_attr(feature = "cargo-clippy", allow(cast_sign_loss))]
+    #[allow(clippy::cast_sign_loss)]
     fn jump(&mut self, offset: isize) -> bool {
         if offset >= 0 {
             self.ptr += offset as usize;
@@ -111,7 +111,7 @@ impl Machine {
 }
 
 #[rustfmt::skip]
-#[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
+#[allow(clippy::cyclomatic_complexity)]
 fn parse_program(s: &str) -> Result<Program> {
     named!(register(Bytes<'_>) -> Register,
         alt!(value!(A, tag!("a")) | value!(B, tag!("b")))

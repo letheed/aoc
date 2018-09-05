@@ -10,7 +10,7 @@ pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
 const SIZE: usize = 100;
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let mut grid1 = input.parse::<Grid>()?;
     let mut grid2 = grid1.clone();

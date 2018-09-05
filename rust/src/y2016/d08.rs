@@ -6,7 +6,7 @@ use std::fmt::{self, Display, Write};
 const DATE: Date = Date::new(Day::D08, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let mut screen = Screen::default();
     for line in input.lines() {
@@ -85,7 +85,7 @@ impl Screen {
                 }
                 let mid = Self::HEIGHT - n;
                 let mut buffer = [false; Self::HEIGHT];
-                #[cfg_attr(feature = "cargo-clippy", allow(needless_range_loop))]
+                #[allow(clippy::needless_range_loop)]
                 for row in 0..Self::HEIGHT {
                     buffer[row] = self.grid[row][col];
                 }

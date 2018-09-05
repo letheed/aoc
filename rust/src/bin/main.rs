@@ -1,15 +1,15 @@
 #![feature(drain_filter)]
 #![feature(in_band_lifetimes)]
 #![feature(stmt_expr_attributes)]
+#![feature(tool_lints)]
 #![warn(rust_2018_idioms, rust_2018_compatibility)]
-#![cfg_attr(feature = "cargo-clippy", deny(clippy_correctness))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_style))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_complexity))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_perf))]
-#![cfg_attr(feature = "cargo-clippy", allow(indexing_slicing))]
-#![cfg_attr(feature = "cargo-clippy", allow(similar_names))]
-#![cfg_attr(feature = "cargo-clippy", allow(non_ascii_literal))]
+#![deny(clippy::correctness)]
+#![warn(clippy::pedantic)]
+#![warn(clippy::style)]
+#![warn(clippy::complexity)]
+#![warn(clippy::perf)]
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::non_ascii_literal)]
 
 use ansi_term::{
     Color::{Green, Red},
@@ -272,7 +272,7 @@ impl Display for RunDuration {
 
 struct RunReport(aoc::Result<Answers>, aoc::Result<Answers>);
 
-#[cfg_attr(feature = "cargo-clippy", allow(if_not_else))]
+#[allow(clippy::if_not_else)]
 impl Display for RunReport {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let result = match &self.0 {

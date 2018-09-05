@@ -5,7 +5,7 @@ use fnv::FnvHashMap as HashMap;
 const DATE: Date = Date::new(Day::D13, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let preferences = parse_preferences(&input)?;
     let mut guests = preferences.keys().map(|gn| gn.0).collect::<Vec<_>>();

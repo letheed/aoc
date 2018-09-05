@@ -10,7 +10,7 @@ pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
 const SIZE: usize = 1000;
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let instructions = parse_instructions(&input)?;
     let mut grid = Grid::default();

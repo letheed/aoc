@@ -4,7 +4,7 @@ use lazy_static::lazy_static;
 const DATE: Date = Date::new(Day::D04, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let mut real_room_ids = 0;
     let mut north_pole_id = 0;
@@ -51,7 +51,7 @@ impl Room<'a> {
         self.checksum.iter().zip(lowercase_count_map.iter()).all(|(b1, (b2, _))| b1 == b2)
     }
 
-    #[cfg_attr(feature = "cargo-clippy", allow(cast_possible_truncation))]
+    #[allow(clippy::cast_possible_truncation)]
     fn decode(&self, buffer: &mut Vec<u8>) {
         buffer.clear();
         buffer.extend_from_slice(self.name);
@@ -72,7 +72,7 @@ fn contains(buffer: &[u8], pattern: &[u8]) -> bool {
     buffer.windows(pattern.len()).any(|window| window == pattern)
 }
 
-#[cfg_attr(feature = "cargo-clippy", allow(double_comparisons))]
+#[allow(clippy::double_comparisons)]
 fn parse_room(s: &'a str) -> Result<Room<'a>> {
     fn is_ascii_lowercase(b: u8) -> bool {
         b'z' >= b && b >= b'a'

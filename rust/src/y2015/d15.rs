@@ -5,7 +5,7 @@ use std::{cmp::max, convert::TryFrom, ops::Mul};
 const DATE: Date = Date::new(Day::D15, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let ingredients = parse_ingredients(&input)?;
     let mut recipes = SubsetSums::new(u8::try_from(ingredients.len())?, 100)
@@ -52,7 +52,7 @@ impl Mul<u8> for Ingredient {
 }
 
 impl Ingredient {
-    #[cfg_attr(feature = "cargo-clippy", allow(cast_sign_loss))]
+    #[allow(clippy::cast_sign_loss)]
     fn score(&self) -> u32 {
         let cap = max(0, self.cap) as u32;
         let dur = max(0, self.dur) as u32;
@@ -100,7 +100,7 @@ impl SubsetSums {
         }
     }
 
-    #[cfg_attr(feature = "cargo-clippy", allow(cast_possible_truncation))]
+    #[allow(clippy::cast_possible_truncation)]
     fn next(&mut self) -> Option<&[u8]> {
         let mut i = self.set[1..].iter().position(|&n| n != 1)? + 1;
         self.set[i] -= 1;

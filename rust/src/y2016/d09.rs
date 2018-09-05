@@ -5,7 +5,7 @@ use std::{collections::BTreeMap, str};
 const DATE: Date = Date::new(Day::D09, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let (decompressed_len_v1, decompressed_len_v2) = decompressed_lengths(&input)?;
     answer!(decompressed_len_v1, decompressed_len_v2);
@@ -79,7 +79,7 @@ mod alternative {
     use crate::{parse::*, Date, Day, Puzzle, Result};
     use failure::bail;
 
-    #[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+    #[allow(clippy::needless_pass_by_value)]
     pub(super) fn solve(input: String) -> Result {
         let data_v1 = parse_compressed_data_v1(&input)?;
         let decompressed_len_v1 = data_v1.iter().map(|stub| stub.decompressed_len()).sum::<usize>();
@@ -120,7 +120,7 @@ mod alternative {
         }
     }
 
-    #[cfg_attr(feature = "cargo-clippy", allow(redundant_closure))]
+    #[allow(clippy::redundant_closure)]
     #[rustfmt::skip]
     fn parse_compressed_data_v1(s: &str) -> Result<Vec<StubV1<'_>>> {
         named!(once(Str<'_>) -> StubV1<'_>, map!(take_till1!(|c| c == '('), |s| StubV1::Once(*s)));
@@ -135,7 +135,7 @@ mod alternative {
         nom!(many0!(Str(s), alt!(once | repeat)))
     }
 
-    #[cfg_attr(feature = "cargo-clippy", allow(redundant_closure))]
+    #[allow(clippy::redundant_closure)]
     #[rustfmt::skip]
     fn parse_compressed_data_v2(s: &str) -> Result<Vec<StubV2<'_>>> {
         named!(once(Str<'_>) -> StubV2<'_>, map!(take_till1!(|c| c == '('), |s| StubV2::Once(*s)));

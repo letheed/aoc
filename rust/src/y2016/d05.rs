@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 const DATE: Date = Date::new(Day::D05, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let mut password1 = String::with_capacity(8);
     let mut password2 = BTreeMap::new();

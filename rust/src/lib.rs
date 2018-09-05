@@ -6,14 +6,14 @@
 #![feature(tool_lints)]
 #![feature(try_from)]
 #![warn(rust_2018_idioms, rust_2018_compatibility)]
-#![cfg_attr(feature = "cargo-clippy", deny(clippy_correctness))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_style))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_complexity))]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_perf))]
-#![cfg_attr(feature = "cargo-clippy", allow(indexing_slicing))]
-#![cfg_attr(feature = "cargo-clippy", allow(similar_names))]
-#![cfg_attr(feature = "cargo-clippy", allow(double_parens))]
+#![deny(clippy::correctness)]
+#![warn(clippy::pedantic)]
+#![warn(clippy::style)]
+#![warn(clippy::complexity)]
+#![warn(clippy::perf)]
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::similar_names)]
+#![allow(clippy::double_parens)]
 
 pub use crate::common::{
     Answer, Answers, Date, Day, Puzzle, Puzzles, Result, Solver, Year, YearPuzzles,

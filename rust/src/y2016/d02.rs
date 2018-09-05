@@ -6,7 +6,7 @@ use std::{convert::TryFrom, fmt::Write};
 const DATE: Date = Date::new(Day::D02, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+#[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let mut code1 = String::new();
     let mut code2 = String::new();

@@ -5,8 +5,8 @@ use mod_exp::mod_exp;
 const DATE: Date = Date::new(Day::D25, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
-#[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
-#[cfg_attr(feature = "cargo-clippy", allow(inconsistent_digit_grouping))]
+#[allow(clippy::needless_pass_by_value)]
+#[allow(clippy::inconsistent_digit_grouping)]
 fn solve(input: String) -> Result {
     let (row, col) = parse_row_column(&input)?;
     let diagonal = row + col - 1;
