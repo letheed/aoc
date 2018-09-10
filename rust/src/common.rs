@@ -112,8 +112,8 @@ mod date {
 
     #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
     pub struct Date {
-        day: Day,
         year: Year,
+        day: Day,
     }
 
     impl Display for Date {
