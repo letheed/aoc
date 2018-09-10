@@ -19,8 +19,30 @@ Answers = Tuple[Answer, Answer]
 Solver = Callable[[str], Answers]
 
 
+class OrderedEnum(Enum):
+    def __ge__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value >= other.value
+        return NotImplemented
+
+    def __gt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value > other.value
+        return NotImplemented
+
+    def __le__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value <= other.value
+        return NotImplemented
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented
+
+
 @unique
-class Day(Enum):
+class Day(OrderedEnum):
     D01: int = 1
     D02: int = 2
     D03: int = 3
@@ -52,7 +74,7 @@ class Day(Enum):
 
 
 @unique
-class Year(Enum):
+class Year(OrderedEnum):
     Y2015: int = 2015
     Y2016: int = 2016
     Y2017: int = 2017
@@ -61,10 +83,10 @@ class Year(Enum):
         return str(self.value)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class Date:
-    day: Day
     year: Year
+    day: Day
 
     def __str__(self) -> str:
         return f'{self.year}-{self.day}'

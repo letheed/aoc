@@ -3,7 +3,7 @@ from aoc.common import answer, Answers, Date, Day, Puzzle
 from . import YEAR
 
 
-DATE: Date = Date(Day.D02, YEAR)
+DATE: Date = Date(YEAR, Day.D02)
 PUZZLE: Puzzle = Puzzle(DATE, lambda input: solve(input))
 
 
