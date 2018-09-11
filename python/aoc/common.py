@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Callable, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum, unique
 import subprocess
@@ -15,7 +15,7 @@ PUZZLE_DIR: str = ROOT_DIR + '/puzzles'
 
 
 Answer = str
-Answers = Tuple[Answer, Answer]
+Answers = List[Answer]
 Solver = Callable[[str], Answers]
 
 
@@ -125,9 +125,13 @@ class Puzzle:
                 f'/{self.date.year}/{self.date.day}'
                 f'/{self._solution_filename}')
         with open(path) as file:
-            sol1, sol2 = file.read().splitlines()
-            return sol1, sol2
+            return file.read().splitlines()
 
 
-def answer(ans1: Any, ans2: Any) -> Answers:
-    return str(ans1), str(ans2)
+def answer(ans1: Any = None, ans2: Any = None) -> Answers:
+    if ans1 is None:
+        return []
+    elif ans2 is None:
+        return [str(ans1)]
+    else:
+        return [str(ans1), str(ans2)]
