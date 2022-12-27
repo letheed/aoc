@@ -101,7 +101,7 @@ class Puzzle:
 
     @staticmethod
     def example(date: Date, solver: Solver) -> Puzzle:
-        return Puzzle(date, solver, 'example', 'example_solution')
+        return Puzzle(date, solver, 'example', 'example solution')
 
     @staticmethod
     def no_solution(date: Date, solver: Solver) -> Puzzle:
