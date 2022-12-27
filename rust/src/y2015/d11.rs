@@ -1,6 +1,8 @@
-use crate::{Date, Day, Puzzle, Result};
-use failure::bail;
 use std::convert::TryFrom;
+
+use failure::bail;
+
+use crate::{Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D11, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -25,7 +27,7 @@ impl TryFrom<String> for Password {
 
     fn try_from(string: String) -> Result<Self> {
         let bytes = string.into_bytes();
-        if bytes.iter().cloned().all(|b| b'a' <= b && b <= b'z') {
+        if bytes.iter().copied().all(|b| b.is_ascii_lowercase()) {
             Ok(Self { bytes })
         } else {
             bail!("password uses letters other than a..z");
@@ -43,11 +45,8 @@ impl TryFrom<Password> for String {
 }
 
 impl Password {
-    #[rustfmt::skip]
     fn is_valid(&self) -> bool {
-        if !self.bytes.windows(3)
-            .any(|bs| bs[0] + 1 == bs[1] && bs[1] + 1 == bs[2])
-        {
+        if !self.bytes.windows(3).any(|bs| bs[0] + 1 == bs[1] && bs[1] + 1 == bs[2]) {
             return false;
         }
         if self.bytes.iter().any(|b| b"iol".contains(b)) {
@@ -57,11 +56,11 @@ impl Password {
         let mut n = 0;
         while let Some(pair) = pairs.next() {
             if pair[0] == pair[1] {
-                if n == 1 { return true; }
-                else {
-                    n += 1;
-                    pairs.next();
+                if n == 1 {
+                    return true;
                 }
+                n += 1;
+                pairs.next();
             }
         }
         false
@@ -76,8 +75,8 @@ impl Password {
 
     fn increment(&mut self) {
         for b in self.bytes.iter_mut().rev() {
-            if let b'z' = b {
-                *b = b'a'
+            if b == &b'z' {
+                *b = b'a';
             } else {
                 *b += 1;
                 break;

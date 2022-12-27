@@ -1,5 +1,6 @@
-use crate::{Date, Day, OkOrFail, Puzzle, Result};
 use fnv::FnvHashMap as HashMap;
+
+use crate::{Date, Day, OkOrFail, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D06, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);

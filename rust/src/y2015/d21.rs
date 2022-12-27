@@ -1,10 +1,13 @@
-use crate::{Date, Day, OkOrFail, Puzzle, Result};
-use failure::bail;
-use serde_derive::Deserialize;
 use std::{
     cmp::max,
     ops::{Generator, GeneratorState::Yielded},
+    pin::Pin,
 };
+
+use failure::bail;
+use serde_derive::Deserialize;
+
+use crate::{Date, Day, OkOrFail, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D21, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -16,7 +19,7 @@ fn solve(input: String) -> Result {
     let mut item_sets = shop.item_sets();
     let mut min_win_cost = u16::max_value();
     let mut max_lose_cost = u16::min_value();
-    while let Yielded(set) = unsafe { item_sets.resume() } {
+    while let Yielded(set) = Pin::new(&mut item_sets).resume(()) {
         let set_cost = set.cost();
         let mut player = player.clone();
         player.equip_set(set);
@@ -24,10 +27,8 @@ fn solve(input: String) -> Result {
             if set_cost < min_win_cost {
                 min_win_cost = set_cost;
             }
-        } else {
-            if set_cost > max_lose_cost {
-                max_lose_cost = set_cost;
-            }
+        } else if set_cost > max_lose_cost {
+            max_lose_cost = set_cost;
         }
     }
     answer!(min_win_cost, max_lose_cost);
@@ -48,13 +49,13 @@ struct Shop {
 }
 
 impl Shop {
-    fn item_sets(&'a self) -> impl Generator<Yield = ItemSet, Return = ()> + 'a {
+    fn item_sets(&self) -> impl Generator<Yield = ItemSet, Return = ()> + '_ {
         move || {
-            for w in self.weapons.iter().cloned() {
+            for w in self.weapons.iter().copied() {
                 yield ItemSet(w, [None; 3]);
-                for a in self.armors.iter().cloned() {
+                for a in self.armors.iter().copied() {
                     yield ItemSet(w, [Some(a), None, None]);
-                    let mut rings = self.rings.iter().cloned();
+                    let mut rings = self.rings.iter().copied();
                     while let Some(r1) = rings.next() {
                         yield ItemSet(w, [None, Some(r1), None]);
                         yield ItemSet(w, [Some(a), Some(r1), None]);
@@ -74,10 +75,8 @@ struct ItemSet(Item, [Option<Item>; 3]);
 impl ItemSet {
     fn cost(&self) -> u16 {
         let mut cost = self.0.cost;
-        for item in &self.1 {
-            if let Some(item) = item {
-                cost += item.cost;
-            }
+        for item in self.1.iter().flatten() {
+            cost += item.cost;
         }
         cost
     }

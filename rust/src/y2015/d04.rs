@@ -1,3 +1,5 @@
+use md5::{Digest, Md5};
+
 use crate::{Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D04, super::YEAR);
@@ -8,19 +10,18 @@ fn solve(input: String) -> Result {
     let mut buffer = input.into_bytes();
     let start = buffer.len();
     buffer.push(b'0');
+    let mut hasher = Md5::new();
     let n5 = loop {
-        let mut hasher = md5::Md5::default();
-        hasher.consume(&buffer);
-        let digest = hasher.hash();
+        hasher.update(&buffer);
+        let digest = hasher.finalize_reset();
         if digest[..2] == [0, 0] && digest[2] < 0x10 {
             break String::from_utf8(buffer[start..].to_owned())?;
         }
         increment(&mut buffer, start);
     };
     let n6 = loop {
-        let mut hasher = md5::Md5::default();
-        hasher.consume(&buffer);
-        let digest = hasher.hash();
+        hasher.update(&buffer);
+        let digest = hasher.finalize_reset();
         if digest[..3] == [0, 0, 0] {
             break std::str::from_utf8(&buffer[start..])?;
         }
@@ -31,7 +32,7 @@ fn solve(input: String) -> Result {
 
 fn increment(buffer: &mut Vec<u8>, start: usize) {
     for b in buffer[start..].iter_mut().rev() {
-        if let b'9' = b {
+        if b == &b'9' {
             *b = b'0';
         } else {
             *b += 1;

@@ -1,7 +1,9 @@
+use std::fmt::{self, Display, Write};
+
+use fnv::FnvHashMap as HashMap;
+
 use self::Instruction::{Rect, RotCol, RotRow};
 use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
-use fnv::FnvHashMap as HashMap;
-use std::fmt::{self, Display, Write};
 
 const DATE: Date = Date::new(Day::D08, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -13,9 +15,8 @@ fn solve(input: String) -> Result {
         let instruction = parse_instruction(line)?;
         screen.apply(instruction);
     }
-    let lit_pixels =
-        screen.grid.iter().map(|row| row.iter().filter(|pix| **pix).count()).sum::<usize>();
-    let font = FONT.iter().cloned().collect::<HashMap<_, _>>();
+    let lit_pixels = screen.grid.iter().map(|row| row.iter().filter(|pix| **pix).count()).sum::<usize>();
+    let font = FONT.iter().copied().collect::<HashMap<_, _>>();
     let mut code = String::with_capacity(Screen::SEGMENTS);
     for i in 0..Screen::SEGMENTS {
         let encoding = screen.encode_segment(i).ok_or_fail("segment index out of bounds")?;
@@ -105,11 +106,8 @@ impl Screen {
         }
         let seg_start = i * Self::SEGMENT_WIDTH;
         let seg_end = seg_start + Self::SEGMENT_WIDTH;
-        let seg_enc = self
-            .grid
-            .iter()
-            .flat_map(|row| row[seg_start..seg_end].iter())
-            .fold(0, |n, &b| (n << 1) + u32::from(b));
+        let seg_enc =
+            self.grid.iter().flat_map(|row| row[seg_start..seg_end].iter()).fold(0, |n, &b| (n << 1) + u32::from(b));
         Some(seg_enc)
     }
 }

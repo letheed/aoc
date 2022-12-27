@@ -29,7 +29,7 @@ fn is_nice1(string: &str) -> bool {
             return false;
         }
         if pair[0] == pair[1] {
-            nice = true
+            nice = true;
         }
     }
     nice

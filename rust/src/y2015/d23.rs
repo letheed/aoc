@@ -57,9 +57,11 @@ impl Machine {
         self.ptr = 0;
         while let Some(&instruction) = program.get(self.ptr) {
             match self.execute(instruction) {
-                Jump(offset) => if self.jump(offset) {
-                    return;
-                },
+                Jump(offset) => {
+                    if self.jump(offset) {
+                        return;
+                    }
+                }
                 Next => self.ptr += 1,
             }
         }
@@ -71,17 +73,21 @@ impl Machine {
             Tpl(reg) => *self.get_mut(reg) *= 3,
             Inc(reg) => *self.get_mut(reg) += 1,
             Jmp(offset) => return Jump(offset),
-            Jie(reg, offset) => if self.get(reg) % 2 == 0 {
-                return Jump(offset);
-            },
-            Jio(reg, offset) => if self.get(reg) == 1 {
-                return Jump(offset);
-            },
+            Jie(reg, offset) => {
+                if self.get(reg) % 2 == 0 {
+                    return Jump(offset);
+                }
+            }
+            Jio(reg, offset) => {
+                if self.get(reg) == 1 {
+                    return Jump(offset);
+                }
+            }
         }
         Next
     }
 
-    fn get(&self, register: Register) -> u32 {
+    const fn get(&self, register: Register) -> u32 {
         match register {
             A => self.reg_a,
             B => self.reg_b,
@@ -101,8 +107,7 @@ impl Machine {
             self.ptr += offset as usize;
             false
         } else {
-            let offset =
-                if offset == isize::min_value() { offset as usize } else { (-offset) as usize };
+            let offset = if offset == isize::min_value() { offset as usize } else { (-offset) as usize };
             let (ptr, overflow) = self.ptr.overflowing_sub(offset);
             self.ptr = ptr;
             overflow
@@ -111,7 +116,7 @@ impl Machine {
 }
 
 #[rustfmt::skip]
-#[allow(clippy::cyclomatic_complexity)]
+#[allow(clippy::cognitive_complexity)]
 fn parse_program(s: &str) -> Result<Program> {
     named!(register(Bytes<'_>) -> Register,
         alt!(value!(A, tag!("a")) | value!(B, tag!("b")))

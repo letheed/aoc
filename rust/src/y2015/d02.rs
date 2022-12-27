@@ -1,5 +1,6 @@
-use crate::{parse::*, Date, Day, Puzzle, Result};
 use std::str::FromStr;
+
+use crate::{parse::*, Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D02, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -32,18 +33,18 @@ impl FromStr for Gift {
         )?;
         sizes.sort_unstable();
         let [a, b, c] = sizes;
-        Ok(Gift(a, b, c))
+        Ok(Self(a, b, c))
     }
 }
 
 impl Gift {
-    fn paper_area(self) -> u32 {
-        let Gift(a, b, c) = self;
+    const fn paper_area(self) -> u32 {
+        let Self(a, b, c) = self;
         3 * (a * b) + 2 * c * (a + b)
     }
 
-    fn ribbon_length(self) -> u32 {
-        let Gift(a, b, c) = self;
+    const fn ribbon_length(self) -> u32 {
+        let Self(a, b, c) = self;
         2 * (a + b) + a * b * c
     }
 }

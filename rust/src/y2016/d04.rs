@@ -1,5 +1,6 @@
-use crate::{parse::*, Date, Day, Puzzle, Result};
 use lazy_static::lazy_static;
+
+use crate::{parse::*, Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D04, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -31,7 +32,7 @@ struct Room<'a> {
     checksum: &'a [u8],
 }
 
-impl Room<'a> {
+impl<'a> Room<'a> {
     fn is_a_real_room(&self) -> bool {
         lazy_static! {
             static ref LOWERCASE_COUNT_MAP: [(u8, u8); 26] = {
@@ -73,17 +74,14 @@ fn contains(buffer: &[u8], pattern: &[u8]) -> bool {
 }
 
 #[allow(clippy::double_comparisons)]
-fn parse_room(s: &'a str) -> Result<Room<'a>> {
-    fn is_ascii_lowercase(b: u8) -> bool {
-        b'z' >= b && b >= b'a'
-    }
-    fn is_name(b: u8) -> bool {
-        is_ascii_lowercase(b) || b == b'-'
+fn parse_room(s: &str) -> Result<Room<'_>> {
+    const fn is_name(b: u8) -> bool {
+        b.is_ascii_lowercase() || b == b'-'
     }
     #[rustfmt::skip]
     nom!(do_parse!(s.as_bytes(),
         name: take_while1!(is_name) >> id: uint!(u32) >> char!('[') >>
-        checksum: take_while_m_n!(5, 5, is_ascii_lowercase) >> char!(']') >>
+        checksum: take_while_m_n!(5, 5, |b:u8| b.is_ascii_lowercase()) >> char!(']') >>
         (Room { name, id, checksum })
     ))
 }

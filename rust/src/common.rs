@@ -1,9 +1,8 @@
-use lazy_static::lazy_static;
 use std::result::Result as StdResult;
 
-pub use self::{
-    date::Date, day::Day, puzzle::Puzzle, puzzles::Puzzles, year::Year, year_puzzles::YearPuzzles,
-};
+use lazy_static::lazy_static;
+
+pub use self::{date::Date, day::Day, puzzle::Puzzle, puzzles::Puzzles, year::Year, year_puzzles::YearPuzzles};
 
 pub type Answer = String;
 pub type Result<T = Answers> = StdResult<T, failure::Error>;
@@ -18,8 +17,7 @@ lazy_static! {
             .output()
             .expect("failed to run git command");
         assert!(output.status.success(), "git command exit status is not success");
-        let mut root_dir =
-            String::from_utf8(output.stdout).expect("git command output is not valid utf8");
+        let mut root_dir = String::from_utf8(output.stdout).expect("git command output is not valid utf8");
         if root_dir.ends_with('\n') {
             root_dir.pop();
         }
@@ -35,8 +33,9 @@ pub enum Answers {
 }
 
 mod day {
-    use num_derive::FromPrimitive;
     use std::fmt::{self, Display};
+
+    use num_derive::FromPrimitive;
 
     #[rustfmt::skip]
     const DAY_STR: [&str; 25] = [
@@ -62,20 +61,23 @@ mod day {
 
     impl Day {
         #[inline]
+        #[must_use]
         pub const fn as_str(self) -> &'static str {
             DAY_STR[self.as_index()]
         }
 
         #[inline]
+        #[must_use]
         pub const fn as_index(self) -> usize {
-            self as usize - Day::D01 as usize
+            self as usize - Self::D01 as usize
         }
     }
 }
 
 mod year {
-    use num_derive::FromPrimitive;
     use std::fmt::{self, Display};
+
+    use num_derive::FromPrimitive;
 
     const YEAR_STR: [&str; 3] = ["2015", "2016", "2017"];
 
@@ -95,20 +97,23 @@ mod year {
 
     impl Year {
         #[inline]
+        #[must_use]
         pub const fn as_str(self) -> &'static str {
             YEAR_STR[self.as_index()]
         }
 
         #[inline]
+        #[must_use]
         pub const fn as_index(self) -> usize {
-            self as usize - Year::Y2015 as usize
+            self as usize - Self::Y2015 as usize
         }
     }
 }
 
 mod date {
-    use super::{Day, Year};
     use std::fmt::{self, Display};
+
+    use super::{Day, Year};
 
     #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
     pub struct Date {
@@ -125,16 +130,18 @@ mod date {
 
     impl Date {
         #[inline]
-        crate const fn new(day: Day, year: Year) -> Self {
-            Self { day, year }
+        pub(crate) const fn new(day: Day, year: Year) -> Self {
+            Self { year, day }
         }
 
         #[inline]
+        #[must_use]
         pub const fn day(self) -> Day {
             self.day
         }
 
         #[inline]
+        #[must_use]
         pub const fn year(self) -> Year {
             self.year
         }
@@ -142,12 +149,14 @@ mod date {
 }
 
 mod puzzle {
-    use super::{Answers, Date, Result, Solver, PUZZLE_DIR};
-    use failure::bail;
     use std::{
         fmt::Write,
         time::{Duration, Instant},
     };
+
+    use failure::bail;
+
+    use super::{Answers, Date, Result, Solver, PUZZLE_DIR};
 
     #[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
     pub struct Puzzle {
@@ -159,33 +168,29 @@ mod puzzle {
 
     impl Puzzle {
         #[inline]
-        crate const fn new(date: Date, solver: Solver) -> Self {
+        pub(crate) const fn new(date: Date, solver: Solver) -> Self {
             Self { date, solver, input_filename: "input", solution_filename: Some("solution") }
         }
 
         #[inline]
         #[allow(dead_code)]
-        crate const fn example(date: Date, solver: Solver) -> Self {
-            Self {
-                date,
-                solver,
-                input_filename: "example",
-                solution_filename: Some("example_solution"),
-            }
+        pub(crate) const fn example(date: Date, solver: Solver) -> Self {
+            Self { date, solver, input_filename: "example", solution_filename: Some("example solution") }
         }
 
         #[inline]
         #[allow(dead_code)]
-        crate const fn no_solution(date: Date, solver: Solver) -> Self {
+        pub(crate) const fn no_solution(date: Date, solver: Solver) -> Self {
             Self { date, solver, input_filename: "input", solution_filename: None }
         }
 
         #[inline]
+        #[must_use]
         pub const fn date(&self) -> Date {
             self.date
         }
 
-        crate fn read_to_string(&self, filename: &str) -> Result<String> {
+        pub(crate) fn read_to_string(&self, filename: &str) -> Result<String> {
             let mut path = PUZZLE_DIR.clone();
             write!(path, "/{}/{}/{}", self.date.year(), self.date.day(), filename)?;
             Ok(read_to_string!(&path)?)
@@ -200,9 +205,8 @@ mod puzzle {
         }
 
         pub fn read_solution(&self) -> Result<Answers> {
-            let solution_filename = match self.solution_filename {
-                Some(filename) => filename,
-                None => return Ok(Answers::None),
+            let Some(solution_filename) = self.solution_filename else {
+                return Ok(Answers::None);
             };
             let mut path = PUZZLE_DIR.clone();
             write!(path, "/{}/{}/{}", self.date.year(), self.date.day(), solution_filename)?;
@@ -233,32 +237,36 @@ mod year_puzzles {
 
     impl YearPuzzles {
         #[inline]
-        crate const fn new(year: Year, puzzles: &'static [Option<Puzzle>; 25]) -> Self {
+        pub(crate) const fn new(year: Year, puzzles: &'static [Option<Puzzle>; 25]) -> Self {
             Self { year, puzzles }
         }
 
         #[inline]
+        #[must_use]
         pub const fn year(self) -> Year {
             self.year
         }
 
         #[inline]
+        #[must_use]
         pub const fn len(self) -> usize {
             self.puzzles.len()
         }
 
         #[inline]
+        #[must_use]
         pub const fn is_empty(self) -> bool {
             self.puzzles.is_empty()
         }
 
         #[inline]
-        pub fn get(self, day: Day) -> Option<Puzzle> {
+        #[must_use]
+        pub const fn get(self, day: Day) -> Option<Puzzle> {
             self.puzzles[day.as_index()]
         }
     }
 
-    impl IntoIterator for &'a YearPuzzles {
+    impl<'a> IntoIterator for &'a YearPuzzles {
         type IntoIter = Iter<'a>;
         type Item = &'a Puzzle;
 
@@ -272,7 +280,7 @@ mod year_puzzles {
         iter: std::iter::Flatten<std::slice::Iter<'a, Option<Puzzle>>>,
     }
 
-    impl Iterator for Iter<'a> {
+    impl<'a> Iterator for Iter<'a> {
         type Item = &'a Puzzle;
 
         #[inline]
@@ -292,27 +300,30 @@ mod puzzles {
 
     impl Puzzles {
         #[inline]
-        crate const fn new(year_puzzles: &'static [YearPuzzles]) -> Self {
+        pub(crate) const fn new(year_puzzles: &'static [YearPuzzles]) -> Self {
             Self { year_puzzles }
         }
 
         #[inline]
+        #[must_use]
         pub const fn len(self) -> usize {
             self.year_puzzles.len()
         }
 
         #[inline]
+        #[must_use]
         pub const fn is_empty(self) -> bool {
             self.year_puzzles.is_empty()
         }
 
         #[inline]
+        #[must_use]
         pub fn get(self, year: Year) -> Option<&'static YearPuzzles> {
             self.year_puzzles.get(year.as_index())
         }
     }
 
-    impl IntoIterator for &'a Puzzles {
+    impl<'a> IntoIterator for &'a Puzzles {
         type IntoIter = Iter<'a>;
         type Item = &'a YearPuzzles;
 
@@ -326,7 +337,7 @@ mod puzzles {
         iter: std::slice::Iter<'a, YearPuzzles>,
     }
 
-    impl Iterator for Iter<'a> {
+    impl<'a> Iterator for Iter<'a> {
         type Item = &'a YearPuzzles;
 
         #[inline]

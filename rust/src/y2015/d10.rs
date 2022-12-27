@@ -1,5 +1,6 @@
-use crate::{Date, Day, Puzzle, Result};
 use failure::bail;
+
+use crate::{Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D10, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -48,5 +49,6 @@ fn parse_digits(s: &str) -> Result<Vec<u8>> {
                 #[allow(clippy::cast_possible_truncation)]
                 |d| Ok(d as u8),
             )
-        }).collect::<Result<Vec<u8>>>()
+        })
+        .collect::<Result<Vec<u8>>>()
 }

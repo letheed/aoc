@@ -1,5 +1,5 @@
-crate use failure::format_err;
-crate use nom::{
+pub use failure::format_err;
+pub use nom::{
     types::{CompleteByteSlice as Bytes, CompleteStr as Str},
     *,
 };
@@ -19,11 +19,7 @@ macro_rules! uint {
 
 macro_rules! int {
     ($i:expr, $t:ty) => {
-        flat_map!(
-            $i,
-            recognize!(chain!(opt!(alt!(char!('-') | char!('+'))) >> digit)),
-            parse_to!($t)
-        )
+        flat_map!($i, recognize!(chain!(opt!(alt!(char!('-') | char!('+'))) >> digit)), parse_to!($t))
     };
 }
 

@@ -1,6 +1,7 @@
-use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
 use failure::bail;
 use fnv::FnvHashMap as HashMap;
+
+use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D13, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -36,7 +37,7 @@ fn solve(input: String) -> Result {
     answer!(happiness_max, happiness_max - biggest_dislike);
 }
 
-fn happiness(seating: &[&'a str], preferences: &HashMap<(&'a str, &'a str), i16>) -> Option<i16> {
+fn happiness<'a>(seating: &[&'a str], preferences: &HashMap<(&'a str, &'a str), i16>) -> Option<i16> {
     let mut happiness = 0;
     for (left, right) in seating.iter().zip(seating.iter().cycle().skip(1)) {
         happiness += preferences.get(&(left, right))?;

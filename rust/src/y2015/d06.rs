@@ -1,9 +1,10 @@
-use self::Action::{Toggle, TurnOff, TurnOn};
-use crate::{parse::*, Date, Day, Puzzle, Result};
 use std::{
     cmp::{max, min},
     str::FromStr,
 };
+
+use self::Action::{Toggle, TurnOff, TurnOn};
+use crate::{parse::*, Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D06, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -23,7 +24,7 @@ fn solve(input: String) -> Result {
 }
 
 fn parse_instructions(s: &str) -> Result<Vec<Instruction>> {
-    s.lines().map(|line| line.parse()).collect()
+    s.lines().map(str::parse).collect()
 }
 
 enum Action {
@@ -88,10 +89,7 @@ struct Grid {
 
 impl Default for Grid {
     fn default() -> Self {
-        Self {
-            lit: vec![false; SIZE * SIZE].into_boxed_slice(),
-            brightness: vec![0; SIZE * SIZE].into_boxed_slice(),
-        }
+        Self { lit: vec![false; SIZE * SIZE].into_boxed_slice(), brightness: vec![0; SIZE * SIZE].into_boxed_slice() }
     }
 }
 

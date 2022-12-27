@@ -1,7 +1,9 @@
+use std::{convert::TryFrom, fmt::Write};
+
+use failure::bail;
+
 use self::Move::{Down, Left, Right, Up};
 use crate::{Date, Day, Puzzle, Result};
-use failure::bail;
-use std::{convert::TryFrom, fmt::Write};
 
 const DATE: Date = Date::new(Day::D02, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -54,18 +56,18 @@ struct Keypad1 {
 }
 
 impl Keypad1 {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self { row: 1, col: 1 }
     }
 
-    fn selected(mut self, move_: Move) -> Self {
+    const fn selected(mut self, move_: Move) -> Self {
         #[rustfmt::skip]
         match move_ {
             Up    if self.row != 0 => self.row -= 1,
             Down  if self.row < 2  => self.row += 1,
             Left  if self.col != 0 => self.col -= 1,
             Right if self.col < 2  => self.col += 1,
-            _ => {},
+            _ => {}
         }
         self
     }
@@ -73,9 +75,8 @@ impl Keypad1 {
     fn button(self) -> Result<u8> {
         if self.row > 2 || self.col > 2 {
             bail!("Keypad1: no button for these coordinates")
-        } else {
-            Ok(self.row * 3 + self.col + 1)
         }
+        Ok(self.row * 3 + self.col + 1)
     }
 }
 
@@ -97,11 +98,11 @@ struct Keypad2 {
 }
 
 impl Keypad2 {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self { row: 3, col: 1 }
     }
 
-    fn selected(mut self, move_: Move) -> Self {
+    const fn selected(mut self, move_: Move) -> Self {
         let old_self = self;
         match move_ {
             Up => self.row -= 1,
@@ -109,11 +110,7 @@ impl Keypad2 {
             Left => self.col -= 1,
             Right => self.col += 1,
         }
-        if KEYPAD_MAP[self.row][self.col] == PAD {
-            old_self
-        } else {
-            self
-        }
+        if KEYPAD_MAP[self.row][self.col] == PAD { old_self } else { self }
     }
 
     fn button(self) -> Result<char> {

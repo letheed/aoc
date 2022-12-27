@@ -1,7 +1,8 @@
-use self::Gate::{And, And1, Input, Lshift, Not, Or, Repeat, Rshift};
-use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
 use failure::bail;
 use fnv::{FnvBuildHasher as BuildHasher, FnvHashMap as HashMap};
+
+use self::Gate::{And, And1, Input, Lshift, Not, Or, Repeat, Rshift};
+use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D07, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -33,7 +34,7 @@ enum Gate<'a> {
 }
 
 #[rustfmt::skip]
-#[allow(clippy::cyclomatic_complexity)]
+#[allow(clippy::cognitive_complexity)]
 fn parse_gate(s: &str) -> Result<(&str, Gate<'_>)> {
     macro_rules! gate { ($name:ident, $($args:tt)*) => {
             named!($name(Str<'_>) -> Gate<'_>, sep!(space0, do_parse!( $($args)* )))
@@ -61,7 +62,7 @@ struct Circuit<'a> {
     wires: HashMap<&'a str, u16>,
 }
 
-impl Circuit<'a> {
+impl<'a> Circuit<'a> {
     fn with_capacity(cap: usize) -> Self {
         Self {
             gates: HashMap::with_capacity_and_hasher(cap, BuildHasher::default()),
@@ -91,7 +92,7 @@ impl Circuit<'a> {
     }
 
     fn get_value(&self, wire: &str) -> Option<u16> {
-        self.wires.get(wire).cloned()
+        self.wires.get(wire).copied()
     }
 
     fn clear_values(&mut self) {
@@ -135,7 +136,7 @@ impl Circuit<'a> {
 
         let mut stack = vec![wire];
         while !stack.is_empty() {
-            let wire = stack.last().cloned().expect("stack cannot be empty");
+            let wire = stack.last().copied().expect("stack cannot be empty");
             let gate = self.get_gate(wire)?;
             match gate {
                 And(in1, in2) => binary_gate!(stack, wire, in1, in2, |n, m| n & m),

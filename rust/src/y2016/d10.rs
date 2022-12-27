@@ -1,6 +1,7 @@
-use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
 use failure::{bail, ResultExt};
 use fnv::FnvHashMap as HashMap;
+
+use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D10, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -16,9 +17,8 @@ fn solve(input: String) -> Result {
     let mut outputs = HashMap::default();
     while let Some(bot_id) = can_proceed.pop() {
         let bot = bots.get_mut(bot_id)?;
-        let (val1, val2) = match bot.values {
-            (Some(val1), Some(val2)) => (val1, val2),
-            _ => bail!("bot {} does not have two microchips", bot_id),
+        let (Some(val1), Some(val2)) = bot.values else {
+            bail!("bot {} does not have two microchips", bot_id);
         };
         if (val1 == 17 && val2 == 61 || val1 == 61 && val2 == 17) && bot_17_61.is_none() {
             bot_17_61 = Some(bot_id);
@@ -30,9 +30,11 @@ fn solve(input: String) -> Result {
         macro_rules! proceed {
             ($next:expr, $value:expr) => {
                 match $next {
-                    Next::Bot(bot_id) => if bots.store(bot_id, $value)? {
-                        can_proceed.push(bot_id);
-                    },
+                    Next::Bot(bot_id) => {
+                        if bots.store(bot_id, $value)? {
+                            can_proceed.push(bot_id);
+                        }
+                    }
                     Next::Output(output_id) => {
                         if outputs.insert(output_id, $value).is_some() {
                             bail!("output {} already has a microchip", output_id);
@@ -74,7 +76,7 @@ struct Bot {
 }
 
 impl Bot {
-    fn new(config: BotConfig) -> Self {
+    const fn new(config: BotConfig) -> Self {
         Self { config, values: (None, None) }
     }
 
@@ -95,13 +97,8 @@ impl Bot {
     }
 }
 
+#[derive(Default)]
 struct Bots(HashMap<BotId, Bot>);
-
-impl Default for Bots {
-    fn default() -> Self {
-        Bots(HashMap::default())
-    }
-}
 
 impl Bots {
     fn init(instructions: Vec<Instruction>) -> Result<(Self, Vec<BotId>)> {
@@ -139,7 +136,7 @@ impl Bots {
     }
 
     fn store(&mut self, bot_id: BotId, value: Value) -> Result<bool> {
-        Ok(self.get_mut(bot_id)?.store(value).with_context(|e| format!("bot {}: {}", bot_id, e))?)
+        Ok(self.get_mut(bot_id)?.store(value).with_context(|e| format!("bot {bot_id}: {e}"))?)
     }
 }
 

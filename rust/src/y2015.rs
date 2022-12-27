@@ -1,6 +1,6 @@
 use crate::{Puzzle, Year, YearPuzzles};
 
-crate const PUZZLES: YearPuzzles = YearPuzzles::new(YEAR, &PUZZLES_ARRAY);
+pub const PUZZLES: YearPuzzles = YearPuzzles::new(YEAR, &PUZZLES_ARRAY);
 
 const YEAR: Year = Year::Y2015;
 

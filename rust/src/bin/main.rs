@@ -1,15 +1,15 @@
 #![feature(drain_filter)]
-#![feature(in_band_lifetimes)]
 #![feature(stmt_expr_attributes)]
-#![feature(tool_lints)]
-#![warn(rust_2018_idioms, rust_2018_compatibility)]
-#![deny(clippy::correctness)]
 #![warn(clippy::pedantic)]
-#![warn(clippy::style)]
-#![warn(clippy::complexity)]
-#![warn(clippy::perf)]
-#![allow(clippy::indexing_slicing)]
-#![allow(clippy::non_ascii_literal)]
+#![warn(clippy::cargo)]
+#![warn(clippy::nursery)]
+#![allow(clippy::similar_names)]
+#![allow(clippy::option_if_let_else)]
+
+use std::{
+    fmt::{self, Display},
+    time::Duration,
+};
 
 use ansi_term::{
     Color::{Green, Red},
@@ -18,20 +18,13 @@ use ansi_term::{
 use aoc::{nom, uint, Answers, Day, Puzzle, Puzzles, Year, YearPuzzles};
 use failure::{format_err, Error};
 use fnv::FnvHashMap as HashMap;
+#[allow(clippy::wildcard_imports)]
 use nom::{types::CompleteStr as Str, *};
 use num_traits::FromPrimitive;
-use std::{
-    fmt::{self, Display},
-    time::Duration,
-};
 
 macro_rules! color_test_result {
     ($res:expr, $sol:expr) => {
-        if $res == $sol {
-            Green.paint($res)
-        } else {
-            Red.paint($res)
-        }
+        if $res == $sol { Green.paint($res) } else { Red.paint($res) }
     };
 }
 
@@ -42,7 +35,7 @@ fn main() {
     } else {
         match args.iter().map(|s| parse_date_arg(s)).collect::<Result<Vec<_>, _>>() {
             Ok(date_args) => group_by_year(date_args).present(),
-            Err(err) => eprintln!("{}", err),
+            Err(err) => eprintln!("{err}"),
         }
     }
 }
@@ -72,7 +65,7 @@ fn parse_date_arg(s: &str) -> Result<DateArg, Error> {
         n: uint!(u8) >> day: expr_opt!(Day::from_u8(n)) >> (day)
     ));
     fn day_arg(s: Str<'_>) -> IResult<Str<'_>, DayArg> {
-        use nom::{Context::Code, Err::Failure, ErrorKind};
+        use nom::{Context::Code, Err::Failure};
 
         if s.input_len() == 0 {
             return Ok((s, DayArg::All));
@@ -89,18 +82,13 @@ fn parse_date_arg(s: &str) -> Result<DateArg, Error> {
                 (rest, DayArg::DayRange(day1, day2))
             }
             "," => {
-                let (rest, mut days) =
-                    separated_nonempty_list_complete!(rest_sep, char!(','), day)?;
+                let (rest, mut days) = separated_nonempty_list_complete!(rest_sep, char!(','), day)?;
                 days.insert(0, day1);
                 (rest, DayArg::DayList(days))
             }
             _ => unreachable!(r#"separator must be ".." or ",""#),
         };
-        if rest.input_len() == 0 {
-            Ok((rest, day_arg))
-        } else {
-            Err(Failure(Code(rest, ErrorKind::NonEmpty)))
-        }
+        if rest.input_len() == 0 { Ok((rest, day_arg)) } else { Err(Failure(Code(rest, ErrorKind::NonEmpty))) }
     }
     #[rustfmt::skip]
     nom!(do_parse!(
@@ -127,9 +115,9 @@ fn group_by_year(mut date_args: Vec<DateArg>) -> HashMap<Year, Vec<DayArg>> {
 
 fn not_solved(year: Year, day: Option<Day>) {
     if let Some(day) = day {
-        println!("{}-{} {} {}", year, day, RunDuration(None), "puzzle not solved");
+        println!("{}-{} {} puzzle not solved", year, day, RunDuration(None));
     } else {
-        println!("{}    {} {}", year, RunDuration(None), "puzzles not solved");
+        println!("{}    {} puzzles not solved", year, RunDuration(None));
     }
 }
 
@@ -137,7 +125,7 @@ trait Present {
     fn present(self);
 }
 
-impl Present for &'a Puzzles {
+impl<'a> Present for &'a Puzzles {
     fn present(self) {
         let mut year_puzzles_iter = self.into_iter();
         if let Some(year_puzzles) = year_puzzles_iter.next() {
@@ -150,7 +138,7 @@ impl Present for &'a Puzzles {
     }
 }
 
-impl Present for &'a YearPuzzles {
+impl<'a> Present for &'a YearPuzzles {
     fn present(self) {
         for puzzle in self {
             puzzle.present();
@@ -158,12 +146,11 @@ impl Present for &'a YearPuzzles {
     }
 }
 
-impl<T> Present for &'a HashMap<Year, T>
+impl<'a, T> Present for &'a HashMap<Year, T>
 where T: AsRef<[DayArg]>
 {
     fn present(self) {
-        let mut year_map_iter =
-            self.into_iter().filter(|(_, day_args)| !day_args.as_ref().is_empty());
+        let mut year_map_iter = self.iter().filter(|(_, day_args)| !day_args.as_ref().is_empty());
         if let Some((&year, day_args)) = year_map_iter.next() {
             (year, day_args.as_ref()).present();
             for (&year, day_args) in year_map_iter {
@@ -174,7 +161,7 @@ where T: AsRef<[DayArg]>
     }
 }
 
-impl Present for (Year, &'a [DayArg]) {
+impl<'a> Present for (Year, &'a [DayArg]) {
     fn present(self) {
         let (year, day_args) = self;
         if day_args.is_empty() {
@@ -183,15 +170,18 @@ impl Present for (Year, &'a [DayArg]) {
         let mut days = Vec::new();
         for day_arg in day_args {
             match *day_arg {
-                DayArg::All => if let Some(year_puzzles) = aoc::PUZZLES.get(year) {
-                    days.extend(year_puzzles.into_iter().map(|puzzle| puzzle.date().day()));
-                },
+                DayArg::All => {
+                    if let Some(year_puzzles) = aoc::PUZZLES.get(year) {
+                        days.extend(year_puzzles.into_iter().map(|puzzle| puzzle.date().day()));
+                    }
+                }
                 DayArg::Day(day) => days.push(day),
-                DayArg::DayList(ref day_list) => days.extend_from_slice(&day_list),
-                DayArg::DayRange(start, end) => days.extend(
-                    (start as u8..=end as u8)
-                        .map(|n| Day::from_u8(n).expect("day cannot be out of range")),
-                ),
+                DayArg::DayList(ref day_list) => days.extend_from_slice(day_list),
+                DayArg::DayRange(start, end) => {
+                    days.extend(
+                        (start as u8..=end as u8).map(|n| Day::from_u8(n).expect("day cannot be out of range")),
+                    );
+                }
             }
         }
         if days.is_empty() && day_args.contains(&DayArg::All) {
@@ -214,7 +204,7 @@ impl Present for (Year, &'a [DayArg]) {
 //     }
 // }
 
-impl Present for (Year, &'a [Day]) {
+impl<'a> Present for (Year, &'a [Day]) {
     fn present(self) {
         let (year, days) = self;
         if days.is_empty() {
@@ -234,7 +224,7 @@ impl Present for (Year, &'a [Day]) {
     }
 }
 
-impl Present for &'a Puzzle {
+impl<'a> Present for &'a Puzzle {
     fn present(self) {
         let (dur, res, sol) = match self.solve() {
             Ok((Answers::None, _)) => (None, Ok(Answers::None), Ok(Answers::None)),
@@ -249,22 +239,21 @@ struct RunDuration(Option<Duration>);
 
 impl Display for RunDuration {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let duration = match &self.0 {
-            Some(dur) => dur,
-            None => return write!(f, "          "),
+        let Some(duration) = &self.0 else {
+            return write!(f, "          ");
         };
         let dur_secs = duration.as_secs();
         let dur_ms = duration.subsec_millis();
         if dur_secs == 0 {
             let dur_us = duration.subsec_micros();
             if dur_us < 1000 {
-                write!(f, "{:7} μs", dur_us)?;
+                write!(f, "{dur_us:7} μs")?;
             } else {
                 write!(f, "{:3}.{:03} ms", dur_us / 1000, dur_us % 1000)?;
             }
         } else {
             let bold = Style::default().bold();
-            write!(f, "{}{:3}.{:03} s{} ", bold.prefix(), dur_secs, dur_ms, bold.suffix())?;
+            write!(f, "{}{dur_secs:3}.{dur_ms:03} s{} ", bold.prefix(), bold.suffix())?;
         }
         Ok(())
     }
@@ -279,45 +268,42 @@ impl Display for RunReport {
             Ok(res) => res,
             Err(err) => return write!(f, "{}", Red.paint(err.to_string())),
         };
-        let solution = match &self.1 {
-            Ok(sol) => sol,
-            Err(_) => &Answers::None,
-        };
+        let solution = self.1.as_ref().unwrap_or(&Answers::None);
         match result {
             Answers::None => write!(f, "no result")?,
             Answers::One(res) => match solution {
                 Answers::None => {
-                    write!(f, "{}", res)?;
+                    write!(f, "{res}")?;
                 }
                 Answers::One(sol) | Answers::Two(sol, _) => {
                     write!(f, "{}", color_test_result!(res, sol))?;
                     if res != sol {
-                        write!(f, " solution = {}", sol)?;
+                        write!(f, " solution = {sol}")?;
                     }
                 }
             },
             Answers::Two(res1, res2) => match solution {
                 Answers::None => {
-                    write!(f, "({}, {})", res1, res2)?;
+                    write!(f, "({res1}, {res2})")?;
                 }
                 Answers::One(sol) => {
                     write!(f, "({}, {})", color_test_result!(res1, sol), res2)?;
                     if res1 != sol {
-                        write!(f, " solution = {}", sol)?;
+                        write!(f, " solution = {sol}")?;
                     }
                 }
                 Answers::Two(sol1, sol2) => {
                     let res1_colored = color_test_result!(res1, sol1);
                     let res2_colored = color_test_result!(res2, sol2);
-                    write!(f, "({}, {})", res1_colored, res2_colored)?;
+                    write!(f, "({res1_colored}, {res2_colored})")?;
                     if res1 != sol1 {
                         if res2 != sol2 {
-                            write!(f, " solution = ({}, {})", sol1, sol2)?;
+                            write!(f, " solution = ({sol1}, {sol2})")?;
                         } else {
-                            write!(f, " solution = {}", sol1)?;
+                            write!(f, " solution = {sol1}")?;
                         }
                     } else if res2 != sol2 {
-                        write!(f, " solution = {}", sol2)?;
+                        write!(f, " solution = {sol2}")?;
                     }
                 }
             },

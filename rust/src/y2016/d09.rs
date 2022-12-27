@@ -1,6 +1,8 @@
-use crate::{Date, Day, Puzzle, Result};
-use failure::bail;
 use std::{collections::BTreeMap, str};
+
+use failure::bail;
+
+use crate::{Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D09, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -17,7 +19,7 @@ macro_rules! parse_int {
         loop {
             $i += 1;
             match $bytes.next() {
-                Some(b) if b'0' <= b && b <= b'9' => n = n * 10 + usize::from(b - b'0'),
+                Some(b) if b.is_ascii_digit() => n = n * 10 + usize::from(b - b'0'),
                 Some($b) => break,
                 Some(b) => bail!("expected '{}', found {:x}", $b as char, b),
                 None => bail!("unexpected end of input"),
@@ -54,6 +56,7 @@ fn decompressed_lengths(s: &str) -> Result<(usize, usize)> {
             }
             Some(_) => {
                 decompressed_length_v2 += weight;
+                #[allow(clippy::comparison_chain)]
                 if i == next_span_end {
                     match weights.remove(&i) {
                         Some(w) => weight /= w,
@@ -76,15 +79,16 @@ fn decompressed_lengths(s: &str) -> Result<(usize, usize)> {
 
 #[allow(unused)]
 mod alternative {
-    use crate::{parse::*, Date, Day, Puzzle, Result};
     use failure::bail;
+
+    use crate::{parse::*, Date, Day, Puzzle, Result};
 
     #[allow(clippy::needless_pass_by_value)]
     pub(super) fn solve(input: String) -> Result {
         let data_v1 = parse_compressed_data_v1(&input)?;
-        let decompressed_len_v1 = data_v1.iter().map(|stub| stub.decompressed_len()).sum::<usize>();
+        let decompressed_len_v1 = data_v1.iter().map(StubV1::decompressed_len).sum::<usize>();
         let data_v2 = parse_compressed_data_v2(&input)?;
-        let decompressed_len_v2 = data_v2.iter().map(|stub| stub.decompressed_len()).sum::<usize>();
+        let decompressed_len_v2 = data_v2.iter().map(StubV2::decompressed_len).sum::<usize>();
         answer!(decompressed_len_v1, decompressed_len_v2);
     }
 
@@ -113,9 +117,7 @@ mod alternative {
         fn decompressed_len(&self) -> usize {
             match self {
                 StubV2::Once(s) => s.len(),
-                StubV2::Repeat(stubs, n) => {
-                    n * stubs.iter().map(|stub| stub.decompressed_len()).sum::<usize>()
-                }
+                StubV2::Repeat(stubs, n) => n * stubs.iter().map(StubV2::decompressed_len).sum::<usize>(),
             }
         }
     }

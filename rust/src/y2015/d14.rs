@@ -1,8 +1,10 @@
-use self::DeerState::{Flying, Resting};
-use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
+use std::cmp::min;
+
 use divrem::DivRem;
 use failure::bail;
-use std::cmp::min;
+
+use self::DeerState::{Flying, Resting};
+use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D14, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -12,10 +14,8 @@ fn solve(input: String) -> Result {
     let mut lines = input.lines();
     let time: u16 = lines.next().ok_or_fail("input is empty")?.parse()?;
     let reindeers = lines.map(parse_reindeer).collect::<Result<Vec<_>>>()?;
-    let max_travel =
-        reindeers.iter().map(|deer| deer.travel(time)).max().ok_or_fail("no reindeers")?;
-    let mut runners =
-        reindeers.iter().cloned().map(Runner::new).collect::<Vec<_>>().into_boxed_slice();
+    let max_travel = reindeers.iter().map(|deer| deer.travel(time)).max().ok_or_fail("no reindeers")?;
+    let mut runners = reindeers.iter().copied().map(Runner::new).collect::<Vec<_>>().into_boxed_slice();
     let max_points = race(&mut runners, time);
     answer!(max_travel, max_points);
 }
@@ -66,7 +66,7 @@ struct Runner {
 }
 
 impl Runner {
-    fn new(deer: Reindeer) -> Self {
+    const fn new(deer: Reindeer) -> Self {
         Self { deer, state: Flying(deer.fly), travel: 0, points: 0 }
     }
 
@@ -91,7 +91,7 @@ impl Runner {
 
 fn race(runners: &mut [Runner], time: u16) -> u16 {
     for _ in 0..time {
-        runners.iter_mut().for_each(|r| r.step());
+        runners.iter_mut().for_each(Runner::step);
         let max_travel = runners.iter().map(|r| r.travel).max().unwrap_or(0);
         for runner in runners.iter_mut() {
             if runner.travel == max_travel {

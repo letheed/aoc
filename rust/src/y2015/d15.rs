@@ -1,6 +1,8 @@
-use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
-use derive_more::Add;
 use std::{cmp::max, convert::TryFrom, ops::Mul};
+
+use derive_more::Add;
+
+use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D15, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -8,15 +10,13 @@ pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 #[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let ingredients = parse_ingredients(&input)?;
-    let mut recipes = SubsetSums::new(u8::try_from(ingredients.len())?, 100)
-        .ok_or_fail("couldn't create subset sums")?;
+    let mut recipes =
+        SubsetSums::new(u8::try_from(ingredients.len())?, 100).ok_or_fail("couldn't create subset sums")?;
     let mut highscore = 0;
     let mut highscore_500cal = 0;
     while let Some(recipe) = recipes.next() {
-        let dish = ingredients
-            .iter()
-            .zip(recipe.iter())
-            .fold(Ingredient::default(), |dish, (&ing, &n)| dish + (ing * n));
+        let dish =
+            ingredients.iter().zip(recipe.iter()).fold(Ingredient::default(), |dish, (&ing, &n)| dish + (ing * n));
         let score = dish.score();
         if score > highscore {
             highscore = score;

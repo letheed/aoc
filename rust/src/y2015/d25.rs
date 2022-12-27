@@ -1,6 +1,7 @@
-use crate::{parse::*, Date, Day, Puzzle, Result};
 use failure::bail;
 use mod_exp::mod_exp;
+
+use crate::{parse::*, Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D25, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);

@@ -1,32 +1,32 @@
+use std::cmp::max;
+
 use self::{
     Difficulty::{Hard, Normal},
     Spell::{Drain, Missile, Poison, Recharge, Shield},
 };
 use crate::{parse::*, Date, Day, Puzzle, Result};
-use std::cmp::max;
 
 const DATE: Date = Date::new(Day::D22, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
 
+#[allow(clippy::equatable_if_let)]
 #[allow(clippy::needless_pass_by_value)]
 fn solve(input: String) -> Result {
     let boss = parse_boss(&input)?;
     let player = Player::new();
     let mut min_mana_spent = u16::max_value();
     let mut min_mana_spent_hard = u16::max_value();
-    let mut fights = vec![
-        Fight::new(player.clone(), boss.clone(), Normal),
-        Fight::new(player.clone(), boss.clone(), Hard),
-    ];
+    let mut fights = vec![Fight::new(player.clone(), boss.clone(), Normal), Fight::new(player, boss, Hard)];
     while let Some(mut fight) = fights.pop() {
-        let min_mana_spent = if let Hard = fight.difficulty {
-            if fight.player.hp == 1 {
-                continue;
+        let min_mana_spent = match fight.difficulty {
+            Hard => {
+                if fight.player.hp == 1 {
+                    continue;
+                }
+                fight.player.hp -= 1;
+                &mut min_mana_spent_hard
             }
-            fight.player.hp -= 1;
-            &mut min_mana_spent_hard
-        } else {
-            &mut min_mana_spent
+            Normal => &mut min_mana_spent,
         };
         if let BossOutcome::BossDied = fight.apply_effects() {
             *min_mana_spent = fight.mana_spent;
@@ -97,7 +97,7 @@ struct Fight {
 }
 
 impl Fight {
-    fn new(player: Player, boss: Boss, difficulty: Difficulty) -> Self {
+    const fn new(player: Player, boss: Boss, difficulty: Difficulty) -> Self {
         Self { player, boss, mana_spent: 0, difficulty }
     }
 
@@ -140,17 +140,19 @@ impl Player {
         }
         self.mana -= spell.mana_cost();
         match spell {
-            Missile => if boss.hp <= 4 {
-                return Outcome::BossDied;
-            } else {
+            Missile => {
+                if boss.hp <= 4 {
+                    return Outcome::BossDied;
+                }
                 boss.hp -= 4;
-            },
-            Drain => if boss.hp <= 2 {
-                return Outcome::BossDied;
-            } else {
+            }
+            Drain => {
+                if boss.hp <= 2 {
+                    return Outcome::BossDied;
+                }
                 boss.hp -= 2;
                 self.hp += 2;
-            },
+            }
             Shield => {
                 self.effect_shield = 6;
                 self.defense += 7;
@@ -205,7 +207,7 @@ enum Spell {
 }
 
 impl Spell {
-    fn mana_cost(self) -> u16 {
+    const fn mana_cost(self) -> u16 {
         MANA_COST[self as usize]
     }
 }

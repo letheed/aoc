@@ -1,5 +1,6 @@
-use crate::{Date, Day, OkOrFail, Puzzle, Result};
 use divrem::DivRem;
+
+use crate::{Date, Day, OkOrFail, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D20, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -12,12 +13,7 @@ fn solve(input: String) -> Result {
     answer!(n1, n2);
 }
 
-fn first_house(
-    presents_min: usize,
-    presents_per_elf: usize,
-    max_houses: Option<usize>,
-) -> Result<usize>
-{
+fn first_house(presents_min: usize, presents_per_elf: usize, max_houses: Option<usize>) -> Result<usize> {
     let presents_min = presents_min / presents_per_elf;
     // Number of presents is presents_per_elf * Σ divisors(house)
     // Since we want to maximize that, we're going to assume
@@ -35,11 +31,8 @@ fn first_house(
             step = q;
         }
         let mut house = step;
-        let house_max = if let Some(max_houses) = max_houses {
-            std::cmp::min(houses.len(), (max_houses + 1) * elf / div)
-        } else {
-            houses.len()
-        };
+        let house_max =
+            max_houses.map_or(houses.len(), |max_houses| std::cmp::min(houses.len(), (max_houses + 1) * elf / div));
         while house < house_max {
             houses[house] += elf;
             house += step;

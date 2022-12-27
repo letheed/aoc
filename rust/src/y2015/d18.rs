@@ -1,9 +1,11 @@
-use crate::{Date, Day, Puzzle, Result};
-use failure::bail;
 use std::{
     ops::{Index, IndexMut},
     str::FromStr,
 };
+
+use failure::bail;
+
+use crate::{Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D18, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -35,12 +37,12 @@ struct Cell {
 
 impl Cell {
     #[inline]
-    fn new_alive() -> Self {
+    const fn new_alive() -> Self {
         Self { alive: true, lives: true }
     }
 
     #[inline]
-    fn new_dead() -> Self {
+    const fn new_dead() -> Self {
         Self { alive: false, lives: false }
     }
 }
@@ -115,7 +117,7 @@ impl Grid {
                     if live_neighbours == 3 {
                         cell.lives = true;
                     }
-                } else if live_neighbours < 2 || 3 < live_neighbours {
+                } else if live_neighbours != 2 && live_neighbours != 3 {
                     cell.lives = false;
                 }
             }

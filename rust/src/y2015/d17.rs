@@ -16,6 +16,7 @@ fn solve(input: String) -> Result {
     for jug in jugs {
         for &volume in &volumes {
             let new_total = volume.total + jug;
+            #[allow(clippy::comparison_chain)]
             if new_total == wanted_volume {
                 combinations += 1;
                 let jugs = volume.jugs + 1;
@@ -49,5 +50,5 @@ struct Volume {
 }
 
 fn parse_jugs(s: &str) -> Result<Vec<Jug>> {
-    Ok(s.lines().map(|line| line.parse::<Jug>()).collect::<std::result::Result<_, _>>()?)
+    Ok(s.lines().map(str::parse).collect::<std::result::Result<_, _>>()?)
 }

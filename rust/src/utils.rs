@@ -1,6 +1,6 @@
 use crate::Result;
 
-crate trait OkOrFail {
+pub trait OkOrFail {
     type Ok;
 
     fn ok_or_fail(self, msg: &'static str) -> Result<Self::Ok>;

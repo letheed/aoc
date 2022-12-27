@@ -1,5 +1,6 @@
-use crate::{Date, Day, Puzzle, Result};
 use failure::bail;
+
+use crate::{Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D07, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -13,9 +14,7 @@ fn solve(input: String) -> Result {
         supernets.clear();
         hypernets.clear();
         parse_supernets_and_hypernets(line, &mut supernets, &mut hypernets)?;
-        if !hypernets.iter().any(|hypernet| has_abba(hypernet))
-            && supernets.iter().any(|supernet| has_abba(supernet))
-        {
+        if !hypernets.iter().any(|hypernet| has_abba(hypernet)) && supernets.iter().any(|supernet| has_abba(supernet)) {
             support_tls += 1;
         }
         for supernet in &supernets {
@@ -34,40 +33,37 @@ fn solve(input: String) -> Result {
     answer!(support_tls, support_ssl);
 }
 
-fn parse_supernets_and_hypernets(
+fn parse_supernets_and_hypernets<'a>(
     mut s: &'a str,
     supernets: &mut Vec<&'a str>,
     hypernets: &mut Vec<&'a str>,
-) -> Result<()>
-{
+) -> Result<()> {
     loop {
         let mut split = s.splitn(2, '[');
         let supernet = split.next().expect("first `next()` cannot fail on `Split`");
         if !supernet.is_empty() {
             supernets.push(supernet);
         }
-        let rest = match split.next() {
-            Some(rest) => rest,
-            None => return Ok(()),
+        let Some(rest) = split.next() else {
+            return Ok(());
         };
         let mut split = rest.splitn(2, ']');
         let hypernet = split.next().expect("first `next()` cannot fail on `Split`");
-        let rest = match split.next() {
-            Some(rest) => rest,
-            None => bail!("input is missing closing ']'"),
+        let Some(rest) = split.next() else {
+            bail!("input is missing closing ']'");
         };
         if !hypernet.is_empty() {
             hypernets.push(hypernet);
         }
-        s = rest
+        s = rest;
     }
 }
 
 fn has_abba(s: &str) -> bool {
     let mut chars = s.chars();
-    let mut c0 = if let Some(c) = chars.next() { c } else { return false };
-    let mut c1 = if let Some(c) = chars.next() { c } else { return false };
-    let mut c2 = if let Some(c) = chars.next() { c } else { return false };
+    let Some(mut c0) = chars.next() else { return false };
+    let Some(mut c1) = chars.next() else { return false };
+    let Some(mut c2) = chars.next() else { return false };
     for c3 in chars {
         if c0 != c1 && c1 == c2 && c0 == c3 {
             return true;
@@ -81,8 +77,8 @@ fn has_abba(s: &str) -> bool {
 
 fn parse_abas(s: &str, abas: &mut Vec<(char, char)>) {
     let mut chars = s.chars();
-    let mut c0 = if let Some(c) = chars.next() { c } else { return };
-    let mut c1 = if let Some(c) = chars.next() { c } else { return };
+    let Some(mut c0) = chars.next() else { return };
+    let Some(mut c1) = chars.next() else { return };
     for c2 in chars {
         if c0 != c1 && c0 == c2 {
             abas.push((c0, c1));

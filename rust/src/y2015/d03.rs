@@ -1,5 +1,6 @@
-use crate::{Date, Day, Puzzle, Result};
 use failure::bail;
+
+use crate::{Date, Day, Puzzle, Result};
 
 const DATE: Date = Date::new(Day::D03, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -50,5 +51,6 @@ fn houses_solo(moves: &[Coord]) -> Vec<Coord> {
             pos.0 += mov.0;
             pos.1 += mov.1;
             Some(*pos)
-        }).collect()
+        })
+        .collect()
 }

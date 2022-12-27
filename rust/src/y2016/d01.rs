@@ -1,9 +1,10 @@
+use fnv::FnvHashSet as HashSet;
+
 use self::{
     Cardinal::{East, North, South, West},
     Side::{Left, Right},
 };
 use crate::{parse::*, Date, Day, Puzzle, Result};
-use fnv::FnvHashSet as HashSet;
 
 const DATE: Date = Date::new(Day::D01, super::YEAR);
 pub(super) const PUZZLE: Puzzle = Puzzle::new(DATE, solve);
@@ -45,7 +46,7 @@ enum Cardinal {
 }
 
 impl Cardinal {
-    fn turned_left(self) -> Self {
+    const fn turned_left(self) -> Self {
         match self {
             North => West,
             East => North,
@@ -54,7 +55,7 @@ impl Cardinal {
         }
     }
 
-    fn turned_right(self) -> Self {
+    const fn turned_right(self) -> Self {
         match self {
             North => East,
             East => South,
@@ -71,7 +72,7 @@ struct Coord {
 }
 
 impl Coord {
-    fn stepped(mut self, direction: Cardinal, steps: i16) -> Self {
+    const fn stepped(mut self, direction: Cardinal, steps: i16) -> Self {
         match direction {
             North => self.y += steps,
             East => self.x += steps,
@@ -81,7 +82,7 @@ impl Coord {
         self
     }
 
-    fn blocks_away(self) -> i16 {
+    const fn blocks_away(self) -> i16 {
         self.x.abs() + self.y.abs()
     }
 }
@@ -91,33 +92,33 @@ fn insert_visited_coords(
     mut coord: Coord,
     direction: Cardinal,
     steps: i16,
-) -> Option<Coord>
-{
+) -> Option<Coord> {
+    #[rustfmt::skip]
     match direction {
         North => for _ in 0..steps {
             coord.y += 1;
             if !coords.insert(coord) {
                 return Some(coord);
             }
-        },
+        }
         East => for _ in 0..steps {
             coord.x += 1;
             if !coords.insert(coord) {
                 return Some(coord);
             }
-        },
+        }
         South => for _ in 0..steps {
             coord.y -= 1;
             if !coords.insert(coord) {
                 return Some(coord);
             }
-        },
+        }
         West => for _ in 0..steps {
             coord.x -= 1;
             if !coords.insert(coord) {
                 return Some(coord);
             }
-        },
+        }
     }
     None
 }
