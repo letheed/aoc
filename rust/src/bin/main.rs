@@ -11,15 +11,15 @@ use std::{
     time::Duration,
 };
 
-use ansi_term::{
-    Color::{Green, Red},
-    Style,
-};
 use aoc::{nom, uint, Answers, Day, Puzzle, Puzzles, Year, YearPuzzles};
 use failure::{format_err, Error};
 use fnv::FnvHashMap as HashMap;
 #[allow(clippy::wildcard_imports)]
 use nom::{types::CompleteStr as Str, *};
+use nu_ansi_term::{
+    Color::{Green, Red},
+    Style,
+};
 use num_traits::FromPrimitive;
 
 macro_rules! color_test_result {
