@@ -7,7 +7,7 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::wildcard_imports)]
 
-pub use failure::Error;
+pub use anyhow::Error;
 
 pub use crate::common::{Answer, Answers, Date, Day, Puzzle, Puzzles, Result, Solver, Year, YearPuzzles};
 pub(crate) use crate::utils::OkOrFail;

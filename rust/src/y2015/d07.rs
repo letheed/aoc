@@ -1,4 +1,4 @@
-use failure::bail;
+use anyhow::bail;
 use fnv::{FnvBuildHasher as BuildHasher, FnvHashMap as HashMap};
 
 use self::Gate::{And, And1, Input, Lshift, Not, Or, Repeat, Rshift};

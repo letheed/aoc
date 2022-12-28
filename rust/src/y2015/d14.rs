@@ -1,7 +1,7 @@
 use std::cmp::min;
 
+use anyhow::bail;
 use divrem::DivRem;
-use failure::bail;
 
 use self::DeerState::{Flying, Resting};
 use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
@@ -34,8 +34,8 @@ impl Reindeer {
     }
 }
 
-#[rustfmt::skip]
 fn parse_reindeer(s: &str) -> Result<Reindeer> {
+    #[rustfmt::skip]
     let reindeer = nom!(
         sep!(Bytes(s.as_bytes()), space0, do_parse!(
             alpha >> tag!("can fly") >>
@@ -47,9 +47,8 @@ fn parse_reindeer(s: &str) -> Result<Reindeer> {
     )?;
     if reindeer.fly + reindeer.rest == 0 {
         bail!("reindeer neither flies nor rests");
-    } else {
-        Ok(reindeer)
     }
+    Ok(reindeer)
 }
 
 #[derive(Copy, Clone)]

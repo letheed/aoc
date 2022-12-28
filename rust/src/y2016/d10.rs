@@ -1,4 +1,4 @@
-use failure::{bail, ResultExt};
+use anyhow::{bail, Context};
 use fnv::FnvHashMap as HashMap;
 
 use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};
@@ -136,7 +136,7 @@ impl Bots {
     }
 
     fn store(&mut self, bot_id: BotId, value: Value) -> Result<bool> {
-        Ok(self.get_mut(bot_id)?.store(value).with_context(|e| format!("bot {bot_id}: {e}"))?)
+        self.get_mut(bot_id)?.store(value).with_context(|| format!("bot {bot_id}"))
     }
 }
 

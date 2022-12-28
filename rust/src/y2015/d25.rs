@@ -1,4 +1,4 @@
-use failure::bail;
+use anyhow::bail;
 use mod_exp::mod_exp;
 
 use crate::{parse::*, Date, Day, Puzzle, Result};

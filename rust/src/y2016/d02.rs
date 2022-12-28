@@ -1,6 +1,6 @@
 use std::{convert::TryFrom, fmt::Write};
 
-use failure::bail;
+use anyhow::bail;
 
 use self::Move::{Down, Left, Right, Up};
 use crate::{Date, Day, Puzzle, Result};
@@ -35,7 +35,7 @@ enum Move {
 }
 
 impl TryFrom<char> for Move {
-    type Error = failure::Error;
+    type Error = anyhow::Error;
 
     fn try_from(c: char) -> Result<Self> {
         let dir = match c {

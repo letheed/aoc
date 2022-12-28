@@ -20,7 +20,7 @@ fn solve(input: String) -> Result {
 struct Gift(u32, u32, u32);
 
 impl FromStr for Gift {
-    type Err = failure::Error;
+    type Err = anyhow::Error;
 
     #[rustfmt::skip]
     fn from_str(s: &str) -> Result<Self> {

@@ -1,15 +1,9 @@
-macro_rules! with_context {
-    ($context:expr, $e:expr) => {{
-        use failure::ResultExt;
-
-        $e.with_context(|err| format!("{}: {}", $context, err))
-    }};
-}
-
 macro_rules! read_to_string {
-    ($path:expr) => {
-        with_context!($path, std::fs::read_to_string($path))
-    };
+    ($path:expr) => {{
+        use anyhow::Context;
+
+        std::fs::read_to_string($path).with_context(|| format!("{}", $path))
+    }};
 }
 
 macro_rules! answer {

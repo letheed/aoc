@@ -45,7 +45,7 @@ struct Instruction {
 }
 
 impl FromStr for Instruction {
-    type Err = failure::Error;
+    type Err = anyhow::Error;
 
     #[rustfmt::skip]
     fn from_str(s: &str) -> Result<Self> {

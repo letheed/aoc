@@ -1,6 +1,6 @@
 use std::convert::TryFrom;
 
-use failure::bail;
+use anyhow::bail;
 
 use crate::{Date, Day, Puzzle, Result};
 
@@ -23,7 +23,7 @@ struct Password {
 }
 
 impl TryFrom<String> for Password {
-    type Error = failure::Error;
+    type Error = anyhow::Error;
 
     fn try_from(string: String) -> Result<Self> {
         let bytes = string.into_bytes();
@@ -36,7 +36,7 @@ impl TryFrom<String> for Password {
 }
 
 impl TryFrom<Password> for String {
-    type Error = failure::Error;
+    type Error = anyhow::Error;
 
     fn try_from(password: Password) -> Result<Self> {
         let Password { bytes } = password;

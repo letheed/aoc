@@ -4,7 +4,7 @@ use std::{
     pin::Pin,
 };
 
-use failure::bail;
+use anyhow::bail;
 use serde_derive::Deserialize;
 
 use crate::{Date, Day, OkOrFail, Puzzle, Result};

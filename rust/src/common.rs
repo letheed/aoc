@@ -5,7 +5,7 @@ use lazy_static::lazy_static;
 pub use self::{date::Date, day::Day, puzzle::Puzzle, puzzles::Puzzles, year::Year, year_puzzles::YearPuzzles};
 
 pub type Answer = String;
-pub type Result<T = Answers> = StdResult<T, failure::Error>;
+pub type Result<T = Answers> = StdResult<T, anyhow::Error>;
 pub type Solver = fn(String) -> Result;
 
 lazy_static! {
@@ -154,7 +154,7 @@ mod puzzle {
         time::{Duration, Instant},
     };
 
-    use failure::bail;
+    use anyhow::bail;
 
     use super::{Answers, Date, Result, Solver, PUZZLE_DIR};
 

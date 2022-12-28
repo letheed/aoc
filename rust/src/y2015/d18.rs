@@ -3,7 +3,7 @@ use std::{
     str::FromStr,
 };
 
-use failure::bail;
+use anyhow::bail;
 
 use crate::{Date, Day, Puzzle, Result};
 
@@ -69,7 +69,7 @@ impl IndexMut<(usize, usize)> for Grid {
 }
 
 impl FromStr for Grid {
-    type Err = failure::Error;
+    type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self> {
         let lines = s.lines().collect::<Vec<_>>();

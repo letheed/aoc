@@ -1,4 +1,4 @@
-use failure::bail;
+use anyhow::bail;
 
 use crate::{Date, Day, Puzzle, Result};
 

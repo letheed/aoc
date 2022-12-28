@@ -1,4 +1,4 @@
-use failure::bail;
+use anyhow::bail;
 use fnv::{FnvBuildHasher as BuildHasher, FnvHashMap as HashMap};
 
 use self::Feature::{Akita, Car, Cat, Child, Goldfish, Perfume, Pomeranian, Samoyed, Tree, Vizsla};

@@ -1,4 +1,4 @@
-pub use failure::format_err;
+pub use anyhow::format_err;
 pub use nom::{
     types::{CompleteByteSlice as Bytes, CompleteStr as Str},
     *,

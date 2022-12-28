@@ -1,4 +1,4 @@
-use failure::bail;
+use anyhow::bail;
 use fnv::FnvHashMap as HashMap;
 
 use crate::{parse::*, Date, Day, OkOrFail, Puzzle, Result};

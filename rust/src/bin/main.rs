@@ -11,8 +11,8 @@ use std::{
     time::Duration,
 };
 
+use anyhow::{format_err, Error};
 use aoc::{nom, uint, Answers, Day, Puzzle, Puzzles, Year, YearPuzzles};
-use failure::{format_err, Error};
 use fnv::FnvHashMap as HashMap;
 #[allow(clippy::wildcard_imports)]
 use nom::{types::CompleteStr as Str, *};
@@ -35,7 +35,7 @@ fn main() {
     } else {
         match args.iter().map(|s| parse_date_arg(s)).collect::<Result<Vec<_>, _>>() {
             Ok(date_args) => group_by_year(date_args).present(),
-            Err(err) => eprintln!("{err}"),
+            Err(err) => eprintln!("{err:#}"),
         }
     }
 }
@@ -266,7 +266,7 @@ impl Display for RunReport {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let result = match &self.0 {
             Ok(res) => res,
-            Err(err) => return write!(f, "{}", Red.paint(err.to_string())),
+            Err(err) => return write!(f, "{}", Red.paint(format!("{err:#}"))),
         };
         let solution = self.1.as_ref().unwrap_or(&Answers::None);
         match result {
@@ -309,7 +309,7 @@ impl Display for RunReport {
             },
         }
         if let Err(err) = &self.1 {
-            write!(f, " {}", Red.paint(err.to_string()))?;
+            write!(f, " {}", Red.paint(format!("{err:#}")))?;
         }
         Ok(())
     }

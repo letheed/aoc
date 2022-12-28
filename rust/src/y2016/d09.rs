@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, str};
 
-use failure::bail;
+use anyhow::bail;
 
 use crate::{Date, Day, Puzzle, Result};
 
@@ -79,7 +79,7 @@ fn decompressed_lengths(s: &str) -> Result<(usize, usize)> {
 
 #[allow(unused)]
 mod alternative {
-    use failure::bail;
+    use anyhow::bail;
 
     use crate::{parse::*, Date, Day, Puzzle, Result};
 
